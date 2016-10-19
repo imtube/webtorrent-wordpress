@@ -82,7 +82,7 @@ if(empty($torrents_directory)){
     ?>
 
 <form name="form1" method="post" action="">
-<input type="hidden" name="<?php echo $hidden_field_name; ?>" value="Y">
+<input type="hidden" name="<?php echo $hidden_field_name?>" value="Y">
 
 <p><?php _e("Show torrent link:", 'menu-test' ); ?>
 <input type="radio" id="torrent_link_enabled" name="torrent_link_enabled" <?php if($torrent_link_enabled == true) echo 'checked="checked"'; ?> value="true" />yes
@@ -98,7 +98,7 @@ if(empty($torrents_directory)){
 <input type="radio" id="show_download_info" name="show_download_info" <?php if($show_download_info == false) echo 'checked="checked"'; ?> value="false" />no
 </p>
 <p><?php _e("Torrents directory:", 'menu-test' ); ?>
-<input type="text" id="torrents_directory" name="torrents_directory" value="<?php echo $torrents_directory; ?>"/>Torrents directory relative to the uploads directory
+<input type="text" id="torrents_directory" name="torrents_directory" value="<?php echo esc_attr($torrents_directory) ?>"/>Torrents directory relative to the uploads directory
 </p>
 <p class="submit">
 <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />
@@ -110,26 +110,15 @@ if(empty($torrents_directory)){
 }
 
 function webtorrent_shortcode($atts){
-   $torrent_link_enabled = get_option('torrent_link_enabled');
-   $show_seed_leech_info = get_option('show_seed_leech_info');
-   $show_download_info = get_option('show_download_info');
-   $torrents_directory = get_option('torrents_directory');
+$torrent_link_enabled = get_option('torrent_link_enabled', true);
 
-if(empty($torrent_link_enabled)){
-	$torrent_link_enabled = "true";
-}
+$show_seed_leech_info = get_option('show_seed_leech_info', true);
 
-$show_seed_leech_info = get_option('show_seed_leech_info');
-if(empty($show_seed_leech_info)){
-	$show_seed_leech_info = "true";
-} 
- 
-$show_download_info = get_option('show_download_info');
-if(empty($show_download_info)){
-	$show_download_info = "true";
-}
+$show_download_info = get_option('show_download_info', true);
 
 $torrents_directory = get_option('torrents_directory');
+
+
 if(empty($torrents_directory)){
 	$torrents_directory = "torrents";
 }
