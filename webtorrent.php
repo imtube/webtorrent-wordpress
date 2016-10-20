@@ -152,11 +152,11 @@ if(empty($torrents_directory)){
       </div>
       <!-- Statistics -->
       <div id="status">
-<?php if($webtorrent_atts['show_seed_leech_info']==true) { ?>      
+<?php if($webtorrent_atts['show_seed_leech_info']=="true") { ?>      
         <div>
           <span class="show-leech">Downloading </span>
           <span class="show-seed">Seeding </span>
-<?php if($webtorrent_atts['torrent_link_enabled']==true) { ?>          
+<?php if($webtorrent_atts['torrent_link_enabled']=="true") { ?>          
           <code>
             <!-- Informative link to the torrent file -->
             <a id="torrentLink" href="<?php echo esc_url( $torrentId )?>"><?php echo esc_attr($filename) ?></a>
@@ -167,7 +167,7 @@ if(empty($torrents_directory)){
           <code id="numPeers">0 peers</code>.
         </div>
 <?php }?>        
-<?php if($webtorrent_atts['show_download_info']==true) { ?>          
+<?php if($webtorrent_atts['show_download_info']=="true") { ?>          
         <div>
           <code id="downloaded"></code>
           of <code id="total"></code>
