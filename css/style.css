@@ -31,6 +31,9 @@ body.is-seed .show-leech {
 #webtorrent {
     background-color: #2a3749;
 }
+#webtorrent  a{
+   color: #35b44f;
+}
 #status {
     color: #fff;
     font-size: 17px;
