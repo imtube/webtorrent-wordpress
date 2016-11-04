@@ -27,13 +27,13 @@ Many of them can be set globally in the plugin settings page.
 
 An example of a shortcode is:
 
-[webtorrent url="http://localhost/xxx/wp-content/themes/x/sintel.torrent" show_seed_leech_info="false"]
+[webtorrent url="https://webtorrent.io/torrents/sintel.torrent" show_seed_leech_info="false"]
 
 == Installation ==
 
 1. Upload `plugin-name.php` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Place the shortcode in your post, pages etc. [webtorrent url="http://localhost/xxx/wp-content/themes/x/sintel.torrent"] or [webtorrent file="sintel.torrent"]
+1. Place the shortcode in your post, pages etc. [webtorrent url="https://webtorrent.io/torrents/sintel.torrent"] or [webtorrent file="sintel.torrent"]
 
 == Frequently Asked Questions ==
 

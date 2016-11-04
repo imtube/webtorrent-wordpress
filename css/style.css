@@ -1,5 +1,5 @@
 #output video {
-  width: 100%;
+    width: 100%;
 }
 #progressBar {
     height: 5px;
@@ -30,6 +30,9 @@ body.is-seed .show-leech {
 }
 #webtorrent {
     background-color: #2a3749;
+}
+#webtorrent a {
+    color: #35b44f;
 }
 #status {
     color: #fff;

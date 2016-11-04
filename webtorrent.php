@@ -26,7 +26,7 @@ function webtorrent_menu() {
 }
 
 function webtorrent_options() {
-    //must check that the user has the required capability 
+    
     if (!current_user_can('manage_options'))
     {
       wp_die( __('You do not have sufficient permissions to access this page.') );
@@ -35,12 +35,12 @@ function webtorrent_options() {
     $hidden_field_name = 'mt_submit_hidden';
     
     if( isset($_POST[ $hidden_field_name ]) && $_POST[ $hidden_field_name ] == 'Y' ) {
-        // Read their posted value
         
-        $torrent_link_enabled = $_POST['torrent_link_enabled'];
-        $show_seed_leech_info = $_POST['show_seed_leech_info'];
-        $show_download_info = $_POST['show_download_info'];
-        $torrents_directory = $_POST['torrents_directory'];
+        check_admin_referer( 'webtorrent-plugin-settings');
+        $torrent_link_enabled = filter_var($_POST['torrent_link_enabled'], FILTER_VALIDATE_BOOLEAN);
+        $show_seed_leech_info = filter_var($_POST['show_seed_leech_info'], FILTER_VALIDATE_BOOLEAN);
+        $show_download_info = filter_var($_POST['show_download_info'], FILTER_VALIDATE_BOOLEAN);
+        $torrents_directory = sanitize_text_field($_POST['torrents_directory']);
     
         update_option( 'torrent_link_enabled', $torrent_link_enabled);
         update_option( 'show_seed_leech_info', $show_seed_leech_info);
@@ -54,22 +54,14 @@ function webtorrent_options() {
 
     }
 
-$torrent_link_enabled = get_option('torrent_link_enabled');
-if(empty($torrent_link_enabled)){
-	$torrent_link_enabled = "true";
-}
+$torrent_link_enabled = get_option('torrent_link_enabled', true);
 
-$show_seed_leech_info = get_option('show_seed_leech_info');
-if(empty($show_seed_leech_info)){
-	$show_seed_leech_info = "true";
-}
+$show_seed_leech_info = get_option('show_seed_leech_info', true);
 
-$show_download_info = get_option('show_download_info');
-if(empty($show_download_info)){
-	$show_download_info = "true";
-}
+$show_download_info = get_option('show_download_info', true);
 
 $torrents_directory = get_option('torrents_directory');
+
 if(empty($torrents_directory)){
 	$torrents_directory = "torrents";
 }
@@ -90,54 +82,43 @@ if(empty($torrents_directory)){
     ?>
 
 <form name="form1" method="post" action="">
-<input type="hidden" name="<?php echo $hidden_field_name; ?>" value="Y">
+<input type="hidden" name="<?php echo $hidden_field_name?>" value="Y">
 
 <p><?php _e("Show torrent link:", 'menu-test' ); ?>
-<input type="radio" id="torrent_link_enabled" name="torrent_link_enabled" <?php if($torrent_link_enabled == 'true') echo 'checked="checked"'; ?> value="true" />yes
-<input type="radio" id="torrent_link_enabled" name="torrent_link_enabled" <?php if($torrent_link_enabled == 'false') echo 'checked="checked"'; ?> value="false" />no
+<input type="radio" id="torrent_link_enabled" name="torrent_link_enabled" <?php if($torrent_link_enabled == true) echo 'checked="checked"'; ?> value="true" />yes
+<input type="radio" id="torrent_link_enabled" name="torrent_link_enabled" <?php if($torrent_link_enabled == false) echo 'checked="checked"'; ?> value="false" />no
 </p>
 
 <p><?php _e("Show seed leech info:", 'menu-test' ); ?>
-<input type="radio" id="show_seed_leech_info" name="show_seed_leech_info" <?php if($show_seed_leech_info == 'true') echo 'checked="checked"'; ?> value="true" />yes
-<input type="radio" id="show_seed_leech_info" name="show_seed_leech_info" <?php if($show_seed_leech_info == 'false') echo 'checked="checked"'; ?> value="false" />no
+<input type="radio" id="show_seed_leech_info" name="show_seed_leech_info" <?php if($show_seed_leech_info == true) echo 'checked="checked"'; ?> value="true" />yes
+<input type="radio" id="show_seed_leech_info" name="show_seed_leech_info" <?php if($show_seed_leech_info == false) echo 'checked="checked"'; ?> value="false" />no
 </p>
 <p><?php _e("Show download info:", 'menu-test' ); ?>
-<input type="radio" id="show_download_info" name="show_download_info" <?php if($show_download_info == 'true') echo 'checked="checked"'; ?> value="true" />yes
-<input type="radio" id="show_download_info" name="show_download_info" <?php if($show_download_info == 'false') echo 'checked="checked"'; ?> value="false" />no
+<input type="radio" id="show_download_info" name="show_download_info" <?php if($show_download_info == true) echo 'checked="checked"'; ?> value="true" />yes
+<input type="radio" id="show_download_info" name="show_download_info" <?php if($show_download_info == false) echo 'checked="checked"'; ?> value="false" />no
 </p>
 <p><?php _e("Torrents directory:", 'menu-test' ); ?>
-<input type="text" id="torrents_directory" name="torrents_directory" value="<?php echo $torrents_directory; ?>"/>Torrents directory relative to the uploads directory
+<input type="text" id="torrents_directory" name="torrents_directory" value="<?php echo esc_attr($torrents_directory) ?>"/>Torrents directory relative to the uploads directory
 </p>
 <p class="submit">
 <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />
 </p>
-
+<?php wp_nonce_field( 'webtorrent-plugin-settings' );?>
 </form>
 </div>
 <?php
 }
 
 function webtorrent_shortcode($atts){
-   $torrent_link_enabled = get_option('torrent_link_enabled');
-   $show_seed_leech_info = get_option('show_seed_leech_info');
-   $show_download_info = get_option('show_download_info');
-   $torrents_directory = get_option('torrents_directory');
+$torrent_link_enabled = get_option('torrent_link_enabled', true);
 
-if(empty($torrent_link_enabled)){
-	$torrent_link_enabled = "true";
-}
+$show_seed_leech_info = get_option('show_seed_leech_info', true);
 
-$show_seed_leech_info = get_option('show_seed_leech_info');
-if(empty($show_seed_leech_info)){
-	$show_seed_leech_info = "true";
-} 
- 
-$show_download_info = get_option('show_download_info');
-if(empty($show_download_info)){
-	$show_download_info = "true";
-}
+$show_download_info = get_option('show_download_info', true);
 
 $torrents_directory = get_option('torrents_directory');
+
+
 if(empty($torrents_directory)){
 	$torrents_directory = "torrents";
 }
@@ -153,8 +134,8 @@ if(empty($torrents_directory)){
   
   $torrentId = $webtorrent_atts['url'];
   
-  if($webtorrent_atts['file'] <> 'none'){
-  	  $uploads = wp_upload_dir();
+  if($webtorrent_atts['file'] <> 'none' && validate_file( $webtorrent_atts['file'])== false){
+  	 $uploads = wp_upload_dir();
      $upload_url = $uploads['baseurl']; 
      $torrentId = $upload_url.'/'.$torrents_directory.'/'.$webtorrent_atts['file'];
   }
@@ -171,14 +152,14 @@ if(empty($torrents_directory)){
       </div>
       <!-- Statistics -->
       <div id="status">
-<?php if($webtorrent_atts['show_seed_leech_info']=='true') { ?>      
+<?php if($webtorrent_atts['show_seed_leech_info']=="true") { ?>      
         <div>
           <span class="show-leech">Downloading </span>
           <span class="show-seed">Seeding </span>
-<?php if($webtorrent_atts['torrent_link_enabled']=='true') { ?>          
+<?php if($webtorrent_atts['torrent_link_enabled']=="true") { ?>          
           <code>
             <!-- Informative link to the torrent file -->
-            <a id="torrentLink" href="<?php echo $torrentId; ?>"><?php echo $filename; ?></a>
+            <a id="torrentLink" href="<?php echo esc_url( $torrentId )?>"><?php echo esc_attr($filename) ?></a>
           </code>
 <?php }?>          
           <span class="show-leech"> from </span>
@@ -186,7 +167,7 @@ if(empty($torrents_directory)){
           <code id="numPeers">0 peers</code>.
         </div>
 <?php }?>        
-<?php if($webtorrent_atts['show_download_info']=='true') { ?>          
+<?php if($webtorrent_atts['show_download_info']=="true") { ?>          
         <div>
           <code id="downloaded"></code>
           of <code id="total"></code>
@@ -199,7 +180,7 @@ if(empty($torrents_directory)){
     </div>
     
 <script type="text/javascript">
-var torrentId = '<?php echo $torrentId?>'
+var torrentId = '<?php echo esc_url( $torrentId )?>'
 
 var client = new WebTorrent()
 
